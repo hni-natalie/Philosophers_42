@@ -1,0 +1,144 @@
+In the bonus part, the main concept 
+1. same goes to mandatory part, check for valid arguments
+2. 
+
+Difference between mandatory and bonus part
+Mandatory 
+- thread represent philo and mutex represent fork
+- threads run in the same rpocess and share the same memory space while each thread runs independently 
+- threads can communicate easily by modifying shared variables
+- mutex (acts as a lock) are used to allow one thread access to the shared variables at once 
+
+Bonus 
+- processes represent philo and semaphores represent fork
+- Each process has its own memory space and there will be a main process to handle all the shared variables and semaphores
+- Binary semaphore AKA mutex either 0(locked) and 1(unlocked)  
+
+** REMARKS
+- When there are multiple threads or processes are running at the same time, we need a sychronization tool so that only one thread or process can access the shared variable at a time
+
+In the mandatory part of project, the main concept
+- threads represent each philo
+	- Each philo are different n they need to eat, sleep, and think independently and simultaneously
+	- Each philo need to be able to access to shared resources
+In order to do this, thread and mutex will be the best choice to let the program work efficiently and easy to control
+- mutex represent each fork
+	- used when we need to access the shared variable we need to lock first then after using unlock it
+	- uses a lock to ensure synchronized access so that only one thread access the shared variable once
+- avoid race condition
+	- happens when 2 or more threads are trying to use the shared resource at the same time
+
+How mutex works step-by-step ? (In a simple understanding)
+- A person (thread) takes the key (locks the mutex) before entering the bathroom (accessing the shared resource)
+- Others (other threads) who want to use the bathrooms (use the shared resource) must wait outside until the key is available (mutex is unlocked)
+- After the person done using the bathroom (done accessing the shared resource), it will unlock the mutex and let the next person uses (next thread)
+
+1. check for arguments
+	- make sure the argc only 5 or 6
+	- make sure only digit
+	- condition met
+		- num_of_philo not more than 200
+		- time at least 60
+		- num_of_meals must be more than 1
+
+2. parsing arguments into data structure
+	so, we need 2 structs in this project 
+	1, shared variable for all the threads
+	2, handle each of the threads (philo) 
+	- init_program
+	- init_philo
+
+REMARKS : 
+0 means false
+1 means true 
+
+	void	init_program(t_program *program, char **argv)
+		- set the num_of_philo
+		- set die_flag if 0 means still alive if 1 means die
+		- allocate memory for philo
+		- allocate memory for fork
+		- initialise all 3 mutex in the shared area (dead_lock, dining_lock, print_lock)
+		- initialise all personal lock (fork) 
+			since the fork can be more than 1, initialise one by one
+
+	void	init_philo(t_program *program, char **argv)
+		- go through each philo
+		- all the variable in the philo structure
+		- num_of_philo : the total number of philo
+		- id : number each philo
+		- eat_flag : either 0 or 1 (0 means not eating n 1 means eating)
+		- eaten : by default 0
+		- start_time : the time when the program started to run 
+		- last_meal : by default same as start_time
+		- time_to_die : take from arg
+		- time_to_sleep : take from arg
+		- time_to_eat : take from arg
+		- num_of_meals : take from arg
+		- dead_lock : link it to the dead_lock in shared area (same goes to dining_lock, print_lock, left_fork and right_fork)
+		- die_flag : link it to the die_flag in shared area
+
+3. We can start the dining time
+	void	dining_time(t_program *program)
+		- create a new thread to monitor the condition of each philo
+		* we need a function to monitor the condition of each philo
+		- if there is a philo die or satisfied, destroy all the mutex
+		- go through each philo and create thread for each philo
+		* we need a function to let philo to eat sleep and think
+		- join monitor_philo by using pthread_join
+		- join each of the thread together as well 
+
+	void	*monitor_condition(void *arg)
+		-  define variable to take the arg
+		- use infinite loop to check for each death and satisfaction of philo
+		- once there is a philo dead or satisfied, break the infinite loop
+
+	int	check_death(t_philo *philo)
+		- go through each philo
+		- if the difference between current time and last meal taken by the philo is greater than time to die and philo is not eating,
+			then print that philo die and set the die_flag to 1 
+		* since we are accessing the shared variables, rmb to lock and unlock the specific mutex
+		
+	int	check_satisfaction(t_philo *philo)
+		- check is there any num_of_meals; if no, then we can skip this 
+		- go through each philo
+			- check the eaten of each philo, if the eaten is greater or equal num of meal 
+				- full increment 1
+		- when all the philo are full 
+			- die flag is set to 1 
+
+	void	*philo_routine(void *args)
+		- let the even num philo wait first 
+		- check is there anyone die 
+		- if there is no one die, philos can eat sleep and think
+		* we need function for philo to eat sleep and think
+	
+	void	eat(t_philo *philo)
+		- if there is only one philo, then let the philo run for the time_to_die and return
+		- print that the philo has taken a fork
+		* since we are taking the fork we need mutex as well so that the fork can be taken by one philo at once
+		- set eat_flag to 1 
+		- update the last_meal
+		- increment the num of the meal that have been eaten
+		- let it eat for the period of time by using usleep()
+
+	void	sleep(t_philo *philo)
+		- print that philo is sleeping
+		- usleep for the period
+
+	customise own print function 
+	<time> <id> <action>
+	1. time = current_time - start_time
+	2. check whether the dead_flag == 0
+	3. print only when the dead_flag == 0, do not print anymore after there is someone died
+	
+	customise own usleep function
+		- to get the precise timing
+		- bcs usleep(500) is more than 0.5 ms
+		Ex: 
+			time = 3
+			start = 1000
+			current_time() will be incrementing
+			when current_time increases until 1003 - 1000 < 3, the while loop will end 
+
+4. Destroy all the mutex and free the structure 
+Done !!
