@@ -6,7 +6,7 @@
 #    By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/26 11:14:33 by hni-xuan          #+#    #+#              #
-#    Updated: 2025/01/09 18:19:45 by hni-xuan         ###   ########.fr        #
+#    Updated: 2025/01/13 09:59:18 by hni-xuan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,6 @@ CFLAGS = -Wall -Wextra -Werror -g
 OBJS_DIR = objs
 SRCS_FILES = main utils routine dining
 
-SRCS = $(addprefix $(SRCS_DIR)/, $(addsuffix .c, $(SRCS_FILES)))
 OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix .o, $(SRCS_FILES)))
 
 NAME = philo
