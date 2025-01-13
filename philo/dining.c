@@ -6,7 +6,7 @@
 /*   By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:54:21 by hni-xuan          #+#    #+#             */
-/*   Updated: 2025/01/10 11:36:14 by hni-xuan         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:33:32 by hni-xuan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,34 @@ void	dining_time(t_program *program)
 			destroy_mutex(program);
 }
 
+/**
+ * @brief This function is used to monitor the philo's status
+ * @param args the philo struct
+ * 
+ * This function will monitor the philo's status
+ * If the philo is dead or satisfied, it will break the loop
+ * @return void*
+ */
 void	*monitor(void *args)
 {
 	t_philo	*philo;
+	int		dead_flag;
 
 	philo = args;
 	while (1)
-		if (dead(philo) == 1 || satisfied(philo) == 1)
+	{
+		dead(philo);
+		satisfied(philo);
+		pthread_mutex_lock(philo->dead_lock);
+		dead_flag = *philo->dead_flag;
+		pthread_mutex_unlock(philo->dead_lock);
+		if (dead_flag == 1)
 			break ;
+	}
 	return (NULL);
 }
 
-int	dead(t_philo *philo)
+void	dead(t_philo *philo)
 {
 	int		i;
 	int		eating;
@@ -61,34 +77,28 @@ int	dead(t_philo *philo)
 			pthread_mutex_lock(philo->dead_lock);
 			*philo->dead_flag = 1;
 			pthread_mutex_unlock(philo->dead_lock);
-			return (1);
 		}
 	}
-	return (0);
 }
 
-int	satisfied(t_philo *philo)
+void	satisfied(t_philo *philo)
 {
 	int	full;
 	int	i;
 
 	full = 0;
 	i = -1;
-	if (philo->num_of_meals < 0)
-		return (0);
-	pthread_mutex_lock(philo->dining_lock);
+	if (philo->num_of_meals == -1)
+		return ;
 	while (++i < philo->num_of_philo)
 		if (philo[i].eaten >= philo->num_of_meals)
 			full += 1;
-	pthread_mutex_unlock(philo->dining_lock);
 	if (full == philo->num_of_philo)
 	{
 		pthread_mutex_lock(philo->dead_lock);
 		*philo->dead_flag = 1;
 		pthread_mutex_unlock(philo->dead_lock);
-		return (1);
 	}
-	return (0);
 }
 
 void	print(char *str, int id, t_philo *philo)

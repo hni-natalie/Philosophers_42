@@ -6,7 +6,7 @@
 /*   By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 16:26:12 by hni-xuan          #+#    #+#             */
-/*   Updated: 2025/01/10 11:33:45 by hni-xuan         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:18:46 by hni-xuan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,19 +65,19 @@ typedef struct s_program
 }	t_program;
 
 // utils
-void		destroy_mutex(t_program *program);
 int			exit_error(char *msg);
+int			philo_atoi(char *str);
 int			philo_strcmp(char *s1, char *s2);
 int			philo_sleep(long long millisec);
 long long	current_time(void);
 
 // check for valid arguments
-int			philo_atoi(char *str);
 int			check_args(char **argv);
 
 // initialise all the data into struct	
 void		init_program(t_program *program, char **argv);
 void		init_philo(t_program *program, char **argv);
+void		destroy_mutex(t_program *program);
 
 // dining
 int			dead_or_alive(t_philo *philo);
@@ -85,8 +85,8 @@ void		*routine(void *args);
 void		dining_time(t_program *program);
 
 void		*monitor(void *args);
-int			dead(t_philo *philo);
-int			satisfied(t_philo *philo);
+void		dead(t_philo *philo);
+void		satisfied(t_philo *philo);
 void		print(char *str, int id, t_philo *philo);
 
 // actions
