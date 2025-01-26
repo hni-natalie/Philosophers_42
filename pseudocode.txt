@@ -1,6 +1,59 @@
+NOTE:
+	Run the program in a standalone terminal, not in the VS code terminal
+	Better to make re before running cases with 200 philos
+	In Standalone terminal: it might have access to more CPU resources and fewer background processes competing for execution time
+	In VS Code terminal: VS Code terminal runs inside VS Code application, 
+		itself consumes CPU and Memory so this can lead to less CPU time being available for your philo threads
+
 In the bonus part, the main concept 
 1. same goes to mandatory part, check for valid arguments
-2. 
+2. initialise for the struct, same goes to mandatory we have 2 structs 
+	- one for program 
+	- one for philo
+
+_Atomic act as a safety lock in a multithreaded program 
+	When a variable is declared with _Atomic means that 
+		"Only one person can change the variable at a time and others have to wait until it's done" 
+	In short:
+		_Atomic makes shared variables safe when multiple threads need to use them at the same time
+
+sem_unlink is called before sem_open to clean up any old semaphore
+call sem_unlink at the end of the program to remove the semaphore when it's no longer needed
+
+sem_open(name, oflag, mode, value)
+	used to create or open a named semaphore 
+name - uniquely identifies the semaphores
+oflag eg. O_CREATE
+mode - permission for the semaphore
+value - determines the number of resources rhe semaphore controls 
+For eg. 
+	value = 3, then up to 3 processes can acquire the semaphore simultaneously
+
+sem_unlink(name)
+	remove the name of a named semaphore, making it unavailable for other processes 
+
+How sem_wait and sem_post work together?
+- When a process performs sem_wait, it decreases the semaphore's counter
+- When a process performs sem_post, it increases the semaphore's counter
+
+Easy way to understand sem_wait and sem_post work
+	If the fork is available (counter > 0), one of the philo (child process) can take the fork 
+	Then, sem_wait will mark the fork is currently holding by someone (counter decrease by 1)
+	Others who want to take the fork will need to wait until sem_wait > 0
+	
+	Philo eat finish already, philo put down the fork
+	then sem_post increase by 1 releasing signal to sem_wait 
+	bcs sem_post and sem_wait are controlling the same counter -- the semaphore 
+
+3. Run the program (eat, sleep, think)
+	monitor_child() is calles after all child processes have been created 
+	to ensure that the parent process waits for and monitors the child processes properly
+
+4. clean all the stuff
+	free those struct
+	sem_close
+	sem_unlink
+Done !!
 
 Difference between mandatory and bonus part
 Mandatory 
