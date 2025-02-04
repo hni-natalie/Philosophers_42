@@ -6,7 +6,7 @@
 /*   By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/26 11:53:51 by hni-xuan          #+#    #+#             */
-/*   Updated: 2025/01/26 17:29:01 by hni-xuan         ###   ########.fr       */
+/*   Updated: 2025/02/04 17:03:57 by hni-xuan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	*dining_time(t_philo *philo)
 		return ((void *)-1);
 	if (pthread_detach(monitor_philo) != 0)
 		return ((void *)-1);
+	while (current_time() < philo->program->start_time)
+		philo_sleep(1);
 	if (philo->id % 2 == 0)
 		philo_sleep(3);
 	while (1)
@@ -67,6 +69,7 @@ void	*monitor(void *args)
 			printf("%s%d %d %s%s\n", RED, time, philo->id, "died", RESET_COLOR);
 			exit(1);
 		}
+		usleep(100);
 	}
 	return (NULL);
 }

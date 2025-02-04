@@ -6,7 +6,7 @@
 /*   By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 16:26:12 by hni-xuan          #+#    #+#             */
-/*   Updated: 2025/01/13 09:18:46 by hni-xuan         ###   ########.fr       */
+/*   Updated: 2025/02/04 17:08:29 by hni-xuan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 # define RESET_COLOR "\033[0m"
 
 # define PHILO_MAX 200
+
+typedef struct s_program	t_program;
 
 typedef struct s_philo
 {

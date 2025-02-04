@@ -6,7 +6,7 @@
 /*   By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:54:21 by hni-xuan          #+#    #+#             */
-/*   Updated: 2025/01/13 09:33:32 by hni-xuan         ###   ########.fr       */
+/*   Updated: 2025/02/04 10:43:53 by hni-xuan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	dead(t_philo *philo)
 		pthread_mutex_lock(philo->dining_lock);
 		eating = philo->eating;
 		pthread_mutex_unlock(philo->dining_lock);
-		if (current_time() - philo->last_meal >= philo->time_to_die
+		if (current_time() - philo[i].last_meal >= philo[i].time_to_die
 			&& eating == 0)
 		{
 			print("died", philo[i].id, &philo[i]);

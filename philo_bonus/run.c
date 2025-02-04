@@ -6,7 +6,7 @@
 /*   By: hni-xuan <hni-xuan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/26 12:33:58 by hni-xuan          #+#    #+#             */
-/*   Updated: 2025/01/26 17:28:23 by hni-xuan         ###   ########.fr       */
+/*   Updated: 2025/02/04 17:04:18 by hni-xuan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ void	init_program(t_program *program, char **argv)
 	program->num_of_meals = -1;
 	if (argv[5])
 		program->num_of_meals = philo_atoi(argv[5]);
-	program->start_time = current_time();
 	program->philo = malloc(sizeof(t_philo) * program->num_of_philo);
 	if (!program->philo)
 		exit_error("Malloc Error.");
+	program->start_time = current_time() + (program->num_of_philo * 60);
 	program->forks = sem_open("forks", O_CREAT, 0644, program->num_of_philo);
 	program->print_lock = sem_open("print_lock", O_CREAT, 0644, 1);
 	program->eat_lock = sem_open("eat_lock", O_CREAT, 0644, 1);
@@ -61,7 +61,7 @@ void	init_program(t_program *program, char **argv)
 	{
 		program->philo[i].id = i + 1;
 		program->philo[i].eaten = 0;
-		program->philo[i].last_meal = current_time();
+		program->philo[i].last_meal = program->start_time;
 		program->philo[i].program = program;
 	}
 }
@@ -108,7 +108,7 @@ void	monitor_children(t_program *program, pid_t *pid)
 		{
 			i = -1;
 			while (++i < program->num_of_philo)
-				kill(pid[i], SIGTERM);
+				kill(pid[i], SIGKILL);
 			break ;
 		}
 	}
