@@ -100,17 +100,12 @@ void	monitor_children(t_program *program, pid_t *pid)
 	int	i;
 	int	status;
 
-	i = -1;
-	while (++i < program->num_of_philo)
+	waitpid(-1, &status, 0);
+	if (status != 0)
 	{
-		waitpid(-1, &status, 0);
-		if (status != 0)
-		{
-			i = -1;
-			while (++i < program->num_of_philo)
-				kill(pid[i], SIGKILL);
-			break ;
-		}
+		i = -1;
+		while (++i < program->num_of_philo)
+			kill(pid[i], SIGKILL);
 	}
 	i = -1;
 	while (++i < program->num_of_philo)
